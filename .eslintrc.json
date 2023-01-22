@@ -1,0 +1,36 @@
+{
+  "root": true,
+  "env": {
+    "browser": true
+},
+  "extends": [
+      "eslint:recommended",
+      "plugin:@typescript-eslint/recommended",
+      "plugin:import/typescript",
+      "plugin:jsx-a11y/recommended",
+      "plugin:prettier/recommended"
+  ],
+  "parser": "@typescript-eslint/parser",
+  "parserOptions": { "project": ["./tsconfig.json"] },
+  "plugins": [
+      "@typescript-eslint",
+      "import",
+      "jsx-a11y",
+      "node",
+      "prettier",
+      "react",
+      "react-hooks",
+      "sort-export-all"
+  ],
+  "rules": {
+        "react/react-in-jsx-scope": "off",
+      "@typescript-eslint/strict-boolean-expressions": [
+          2,
+          {
+              "allowString" : false,
+              "allowNumber" : false
+          }
+      ]
+  },
+  "ignorePatterns": ["src/**/*.test.ts", "src/frontend/generated/*", "src/resportWebVitals.js"]
+}
