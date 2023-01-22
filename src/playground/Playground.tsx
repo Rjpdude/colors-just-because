@@ -9,7 +9,7 @@ export const Playground = () => {
   const [mtrx, setMtrx] = useState<ColorStream[]>([])
 
   useEffect(() => {
-    const palette = paletteFrom(2)
+    const palette = paletteFrom(3)
     createColorStream(palette, (colors) => {
       return setMtrx((m) =>
         (m.length === palette.length ? [] : m).concat({
