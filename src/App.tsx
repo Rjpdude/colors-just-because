@@ -1,13 +1,15 @@
 import { Playground } from 'playground/Playground'
-import { registryContext } from 'registry/registry'
+import { RegistryContext } from 'registry/registry'
+import { GlobalStyle } from 'styles/global'
 
 const App = () => {
   return (
-    <registryContext.Provider value={{ documentHeight: -1, documentWidth: -1 }}>
+    <RegistryContext.Provider value={{ documentHeight: -1, documentWidth: -1 }}>
+      <GlobalStyle background="" />
       <div className="App">
         <Playground />
       </div>
-    </registryContext.Provider>
+    </RegistryContext.Provider>
   )
 }
 

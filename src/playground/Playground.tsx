@@ -24,15 +24,13 @@ export const Playground = () => {
     <Container>
       <HexTable>
         {mtrx.map(({ id: mtrxId, colors }) => (
-          <>
-            <HexRow key={mtrxId}>
-              {colors.map(({ id: colorId, rgbstr }) => (
-                <Col key={colorId}>
-                  <HexBlock bg={rgbstr} />
-                </Col>
-              ))}
-            </HexRow>
-          </>
+          <HexRow key={mtrxId}>
+            {colors.map(({ id: colorId, rgbstr }) => (
+              <Col key={colorId}>
+                <HexBlock bg={rgbstr} />
+              </Col>
+            ))}
+          </HexRow>
         ))}
       </HexTable>
     </Container>
