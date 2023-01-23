@@ -23,6 +23,8 @@
       "sort-export-all"
   ],
   "rules": {
+    /** prettier */
+    "prettier/prettier": "warn",
         "react/react-in-jsx-scope": "off",
       "@typescript-eslint/strict-boolean-expressions": [
           2,

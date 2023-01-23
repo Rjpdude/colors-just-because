@@ -37,7 +37,8 @@ export const createColorStream = (
   const fibonacciArr = fibonacciSeq()
 
   const interpolateDefinitions = (indx: number, color: string) => {
-    const genesisHcl = d3.hcl(color)
+    const backupHcl = d3.hcl(color)
+    const genesisHcl = d3.hcl(backupHcl.h, backupHcl.c, 50)
     const scaled = scaleHcl(indx, genesisHcl, fibonacciArr)
 
     const test1 = scaled.rowDark.reverse().slice(0, 6)
@@ -46,14 +47,17 @@ export const createColorStream = (
       scaled.rowLight.length - 1
     )
     const selection = d3
-      .quantize(d3.interpolateHcl(test1[0], test1[test1.length - 1]), 10)
+      .quantize(d3.interpolateHcl(test1[0], color), 10)
+      .slice(0, 9)
       .concat(color)
       .concat(
-        d3.quantize(d3.interpolateHcl(test2[0], test2[test1.length - 1]), 10)
+        d3
+          .quantize(d3.interpolateHcl(color, test2[test1.length - 1]), 10)
+          .slice(1)
       )
       .map((hcl) => d3.rgb(hcl).toString())
     //return selection
-    console.log('result', selection)
+    //console.log('result', selection)
     return selection
 
     // return scaled.rowDark
@@ -76,13 +80,13 @@ export const createColorStream = (
       i < dist.length - 1;
       i++
     ) {
-      //queueLight.h -= dist[i].circumferance / 20;
-      queueLight.c += dist[i].circumferance / 5
-      queueLight.l += dist[i].circumferance / 2.5
+      //queueLight.h -= dist[i].circumferance / 20
+      //queueLight.c += dist[i].circumferance / 10
+      //queueLight.l += dist[i].circumferance / 2
 
-      //queueDark.h += dist[i].circumferance / 20;
-      queueDark.c -= dist[i].circumferance / 5
-      queueDark.l -= dist[i].circumferance / 2.5
+      //queueDark.h += dist[i].circumferance / 20
+      //queueDark.c -= dist[i].circumferance / 10
+      //queueDark.l -= dist[i].circumferance / 2
 
       rowLight.push(queueLight)
       rowDark.push(queueDark)

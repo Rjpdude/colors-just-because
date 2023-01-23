@@ -1,11 +1,12 @@
 import type { RGBColor } from 'd3'
-import { IdentifiableElement } from 'registry/registry.types'
 
-export interface ColorStream extends IdentifiableElement {
+export interface ColorStream {
+  id: string
   colors: UIColor[]
 }
 
-export interface UIColor extends IdentifiableElement {
+export interface UIColor {
+  id: string
   rgbstr: string
   rgb: RGBColor
 }
