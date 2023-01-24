@@ -1,41 +1,45 @@
-import { ColorStream } from 'io/color.types'
-import { useState, useEffect } from 'react'
-import { Container, HexTable, HexRow, Col, HexBlock } from './styles'
-import { v4 as uuid } from 'uuid'
-import { createColorStream } from 'io/color.io'
+import { FabricBlock, FabricCol, FabricRow, FabricWrapper } from 'fabric/styles'
+import { useEffect, useState } from 'react'
+import { Fabric } from 'fabric/types'
+import { deltaObservable } from 'queue/delta'
+import { createColorStreamIO } from 'io/color.io'
 import { paletteFrom } from './config/palettes'
-import { useWindowDimensions } from 'hooks/useWindowSize'
 
 export const Playground = () => {
-  const [mtrx, setMtrx] = useState<ColorStream[]>([])
-
-  useWindowDimensions()
+  const [matrix, setMatrix] = useState<Fabric[]>()
+  const [colors, setColors] = useState<string[][]>([])
 
   useEffect(() => {
-    const palette = paletteFrom(3)
-    createColorStream(palette, (colors) => {
-      return setMtrx((m) =>
-        (m.length === palette.length ? [] : m).concat({
-          id: uuid(),
-          colors
-        })
+    const sub = deltaObservable.subscribe((res) => {
+      const colorMatrix = createColorStreamIO(
+        paletteFrom(4),
+        res.matrix.length,
+        res.matrix[0].columns.length
       )
+      // console.log(res.matrix)
+      // console.log(colorMatrix)
+      setColors(colorMatrix)
+      setMatrix(res.matrix)
     })
+    return () => sub.unsubscribe()
   }, [])
 
   return (
-    <Container>
-      <HexTable>
-        {mtrx.map(({ id: mtrxId, colors }) => (
-          <HexRow key={mtrxId}>
-            {colors.map(({ id: colorId, rgbstr }) => (
-              <Col key={colorId}>
-                <HexBlock bg={rgbstr} />
-              </Col>
+    <FabricWrapper>
+      {matrix &&
+        matrix.map((row, id) => (
+          <FabricRow key={id}>
+            {row.columns.map((col, colId) => (
+              <FabricCol key={colId}>
+                <FabricBlock
+                  style={{
+                    backgroundColor: colors[id][colId]
+                  }}
+                />
+              </FabricCol>
             ))}
-          </HexRow>
+          </FabricRow>
         ))}
-      </HexTable>
-    </Container>
+    </FabricWrapper>
   )
 }

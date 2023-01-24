@@ -1,6 +1,7 @@
 import { AsymetricDistribution, UIColor } from './color.types'
 import * as d3 from 'd3'
 import { v4 as uuid } from 'uuid'
+import { hcl } from 'd3'
 
 export function fibonacciSeq(
   position = 1,
@@ -30,10 +31,68 @@ export function fibonacciSeq(
       )
 }
 
+export const createColorStreamIO = (
+  hexOrRgbArr: string[],
+  rows: number,
+  cols: number
+) => {
+  const colorMatrix = Array.from({ length: rows }, () =>
+    Array.from({ length: cols }, () => '#fff')
+  )
+
+  const quantizedEnum = d3.quantize((n) => n, rows + 1)
+  // const blendedInterp = d3.piecewise(d3.interpolateLab, hexOrRgbArr)
+  // const blended = Array.from({ length: rows }, (_val, i) =>
+  //   blendedInterp(quantizedEnum[i])
+  // )
+
+  const chromaInterp = hexOrRgbArr
+    .map((color) => hcl(color))
+    .sort((a, b) => a.c - b.c)
+  const sortedByChroma = d3.piecewise(d3.interpolateLab, chromaInterp)
+
+  const hueInterp = hexOrRgbArr
+    .map((color) => hcl(color))
+    .sort((a, b) => a.h - b.h)
+  const sortedByHue = d3.piecewise(d3.interpolateLab, hueInterp)
+
+  const lightInterp = hexOrRgbArr
+    .map((color) => hcl(color))
+    .sort((a, b) => a.l - b.l)
+    .reverse()
+  const sortedByLight = d3.piecewise(d3.interpolateLab, lightInterp)
+
+  // for (let i = 0; i < rows; i++) {
+  //   const quantized = quantizedEnum[i]
+  //   // colorMatrix[i][Math.ceil(cols / 2) + 2] = blended[i]
+  //   colorMatrix[i][Math.ceil(cols / 2) + 1] = sortedByChroma(quantized)
+  //   colorMatrix[i][Math.ceil(cols / 2)] = sortedByHue(quantized)
+  //   colorMatrix[i][Math.ceil(cols / 2) - 1] = sortedByLight(quantized)
+  // }
+
+  const trifecta = (row: number) =>
+    d3.piecewise(d3.interpolateLab, [
+      sortedByHue(quantizedEnum[row]),
+      sortedByLight(quantizedEnum[row]),
+      sortedByChroma(quantizedEnum[row]),
+    ])
+  const quantizedCol = d3.quantize((n) => n, cols + 1)
+  for (let i = 0; i < rows; i++) {
+    for (let i2 = 0; i2 < cols; i2++) {
+      const interp = trifecta(i)
+      colorMatrix[i][i2] = interp(quantizedCol[i2])
+    }
+  }
+  //   colorMatrix[0][i] = trifecta(quantizedCol[i])
+  // }
+  return colorMatrix
+}
+
 export const createColorStream = (
   hexOrRgbArr: string[],
   onStream: (stream: UIColor[]) => void
 ) => {
+  const res: UIColor[][] = []
   const fibonacciArr = fibonacciSeq()
 
   const interpolateDefinitions = (indx: number, color: string) => {
@@ -104,12 +163,18 @@ export const createColorStream = (
   for (let i = 0; i < hexOrRgbArr.length; i++) {
     const genesis = hexOrRgbArr[i]
     const colorDefinitions = interpolateDefinitions(i, genesis)
-    onStream(
-      colorDefinitions.map((rbgstr) => ({
-        id: uuid(),
-        rgb: d3.rgb(rbgstr),
-        rgbstr: d3.rgb(rbgstr).toString()
-      }))
-    )
+    res[i] = colorDefinitions.map((rbgstr) => ({
+      id: uuid(),
+      rgb: d3.rgb(rbgstr),
+      rgbstr: d3.rgb(rbgstr).toString()
+    }))
+    // onStream(
+    //   colorDefinitions.map((rbgstr) => ({
+    //     id: uuid(),
+    //     rgb: d3.rgb(rbgstr),
+    //     rgbstr: d3.rgb(rbgstr).toString()
+    //   }))
+    // )
   }
+  return res
 }

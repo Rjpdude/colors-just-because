@@ -22,7 +22,11 @@ export const FabricCol = styled.div`
 `
 
 export const FabricBlock = styled.div`
-  border: 1px solid #f4f4f4;
   display: flex;
-  flex: 1;
+  flex: 1 0 0;
+
+  &:hover {
+    cursor: pointer;
+    border: 2px solid rgba(0, 0, 0, 0.1);
+  }
 `

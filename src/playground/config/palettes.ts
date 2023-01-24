@@ -3,7 +3,7 @@ export const paletteFrom = (indx: number) => {
 }
 
 export const palettes = [
-  ['4c5454', 'ff715b', 'ffffff', '1ea896', '523f38'],
+  ['4c5454', 'ff715b', '90be6d', '1ea896', '523f38'],
   [
     'f94144',
     'f3722c',
