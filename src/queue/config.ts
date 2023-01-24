@@ -8,7 +8,7 @@ export const schedulerDefault: Queue = {
 }
 
 export const generateMatrix = (dimensions: number[]) => {
-  const [columns, rows] = dimensions.map((num) => Math.floor(Math.sqrt(num) / 4))
+  const [columns, rows] = dimensions.map((num) => Math.floor(Math.sqrt(num)))
   return Array.from({ length: rows }, () => ({
     id: uuid(),
     columns: Array.from({ length: columns }, () => ({
