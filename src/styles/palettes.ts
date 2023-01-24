@@ -1,5 +1,7 @@
 export const paletteFrom = (indx: number) => {
-  return palettes[indx].map((hex) => (hex.startsWith('#') ? hex : `#${hex}`))
+  return palettes[indx].map((hex) =>
+    hex.startsWith('#') ? hex : `#${hex}`
+  )
 }
 
 export const palettes = [

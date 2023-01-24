@@ -1,5 +1,5 @@
 import { Fabric } from 'fabric/types'
-import { ColorStream } from 'io/color.types'
+import { ColorStream } from 'io/color.io'
 import { Subject, share, bufferTime } from 'rxjs'
 import { Identifiable } from 'types'
 import * as config from './config'
@@ -27,15 +27,21 @@ export const deltaObservable = published.pipe(
 
 export const registerUiDeltaQueue = () => {
   return [
-    queued.pipe(bufferTime(config.QUEUE_TIME)).subscribe((bufferedIO) => {
-      if (bufferedIO.length > 0) {
-        const latest = bufferedIO[bufferedIO.length - 1]
-        published.next({
-          matrix: config.generateMatrix(latest.dimensions) as any,
-          colorstream: config.mapColorScheme(latest.dimensions)
-        })
-      }
-    }),
+    queued
+      .pipe(bufferTime(config.QUEUE_TIME))
+      .subscribe((bufferedIO) => {
+        if (bufferedIO.length > 0) {
+          const latest = bufferedIO[bufferedIO.length - 1]
+          published.next({
+            matrix: config.generateMatrix(
+              latest.dimensions
+            ) as any,
+            colorstream: config.mapColorScheme(
+              latest.dimensions
+            )
+          })
+        }
+      }),
     windowResizeEvent$.subscribe((dimensions) => {
       queued.next({
         dimensions: [dimensions.width, dimensions.height]
