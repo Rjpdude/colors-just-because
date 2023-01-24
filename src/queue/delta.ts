@@ -1,5 +1,5 @@
 import { Fabric } from 'fabric/types'
-import { ColorStream } from 'io/color.io'
+import { ColorStream } from 'io/color'
 import { Subject, share, bufferTime } from 'rxjs'
 import { Identifiable } from 'types'
 import * as config from './config'

@@ -2,7 +2,7 @@ import * as Style from 'fabric/styles'
 import { useEffect, useState } from 'react'
 import { Fabric } from 'fabric/types'
 import { deltaObservable } from 'queue/delta'
-import { createColorStreamIO } from 'io/color.io'
+import { createColorStreamIO } from 'io/color'
 import { paletteFrom } from 'styles/palettes'
 
 export const Playground = () => {
