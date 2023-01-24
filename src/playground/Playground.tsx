@@ -12,7 +12,7 @@ export const Playground = () => {
   useEffect(() => {
     const sub = deltaObservable.subscribe((res) => {
       const colorMatrix = createColorStreamIO(
-        paletteFrom(4),
+        paletteFrom(1),
         res.matrix.length,
         res.matrix[0].columns.length
       )

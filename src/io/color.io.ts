@@ -1,7 +1,7 @@
 import { AsymetricDistribution, UIColor } from './color.types'
 import * as d3 from 'd3'
 import { v4 as uuid } from 'uuid'
-import { hcl } from 'd3'
+import { hcl, HCLColor } from 'd3'
 
 export function fibonacciSeq(
   position = 1,
@@ -31,6 +31,10 @@ export function fibonacciSeq(
       )
 }
 
+export const hclInterpolator = (arr: HCLColor[]) => {
+  return d3.piecewise(d3.interpolateLab, arr)
+}
+
 export const createColorStreamIO = (
   hexOrRgbArr: string[],
   rows: number,
@@ -40,20 +44,27 @@ export const createColorStreamIO = (
     Array.from({ length: cols }, () => '#fff')
   )
 
-  const quantizedEnum = d3.quantize((n) => n, rows + 1)
   // const blendedInterp = d3.piecewise(d3.interpolateLab, hexOrRgbArr)
   // const blended = Array.from({ length: rows }, (_val, i) =>
   //   blendedInterp(quantizedEnum[i])
   // )
+  // const hclArr = hexOrRgbArr.map((str) => hcl(str))
+  // const sortMap = {
+  //   hue: hclArr.sort((a, b) => a.h - b.h),
+  //   chroma: hclArr.sort((a, b) => a.c - b.c),
+  //   // light: hclArr.sort((a, b) => a.l - b.l)
+  // }
 
   const chromaInterp = hexOrRgbArr
     .map((color) => hcl(color))
     .sort((a, b) => a.c - b.c)
+    .reverse()
   const sortedByChroma = d3.piecewise(d3.interpolateLab, chromaInterp)
 
   const hueInterp = hexOrRgbArr
     .map((color) => hcl(color))
     .sort((a, b) => a.h - b.h)
+    .reverse()
   const sortedByHue = d3.piecewise(d3.interpolateLab, hueInterp)
 
   const lightInterp = hexOrRgbArr
@@ -70,21 +81,18 @@ export const createColorStreamIO = (
   //   colorMatrix[i][Math.ceil(cols / 2) - 1] = sortedByLight(quantized)
   // }
 
-  const trifecta = (row: number) =>
-    d3.piecewise(d3.interpolateLab, [
-      sortedByHue(quantizedEnum[row]),
-      sortedByLight(quantizedEnum[row]),
-      sortedByChroma(quantizedEnum[row]),
-    ])
-  const quantizedCol = d3.quantize((n) => n, cols + 1)
+  const quantizedEnum = d3.quantize((n) => n, rows + cols)
+
   for (let i = 0; i < rows; i++) {
+    const interp = d3.piecewise(d3.interpolateLab, [
+      sortedByHue(quantizedEnum[i]),
+      sortedByLight(quantizedEnum[i]),
+      sortedByChroma(quantizedEnum[i])
+    ])
     for (let i2 = 0; i2 < cols; i2++) {
-      const interp = trifecta(i)
-      colorMatrix[i][i2] = interp(quantizedCol[i2])
+      colorMatrix[i][i2] = interp(quantizedEnum[i + i2])
     }
   }
-  //   colorMatrix[0][i] = trifecta(quantizedCol[i])
-  // }
   return colorMatrix
 }
 

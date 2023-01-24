@@ -27,6 +27,6 @@ export const FabricBlock = styled.div`
 
   &:hover {
     cursor: pointer;
-    border: 2px solid rgba(0, 0, 0, 0.1);
+    border: 2px solid rgba(10, 10, 10, 0.35);
   }
 `
