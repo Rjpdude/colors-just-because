@@ -1,51 +1,41 @@
 import { Fabric } from 'fabric/types'
 import { ColorStream } from 'io/color'
-import { Subject, share, bufferTime } from 'rxjs'
+import { generateMatrix } from 'io/matrix'
+import { Subject, share, mergeWith, interval } from 'rxjs'
 import { Identifiable } from 'types'
-import * as config from './config'
-import { windowResizeEvent$ } from './windowSize'
+import { windowResizeEvent$ } from './window'
 
 export interface Published {
   matrix: Identifiable<Fabric>[]
   colorstream: Identifiable<ColorStream>[][]
 }
 
-export interface Queue {
-  dimensions: number[]
-}
-
 const published = new Subject<Published>()
-const queued = new Subject<Queue>()
 
 export const deltaObservable = published.pipe(
   share({
-    resetOnError: false,
+    resetOnComplete: false,
+    resetOnRefCountZero: false
+  })
+)
+
+export const queueInterval$ = interval(750).pipe(
+  share({
     resetOnComplete: false,
     resetOnRefCountZero: false
   })
 )
 
 export const registerUiDeltaQueue = () => {
-  return [
-    queued
-      .pipe(bufferTime(config.QUEUE_TIME))
-      .subscribe((bufferedIO) => {
-        if (bufferedIO.length > 0) {
-          const latest = bufferedIO[bufferedIO.length - 1]
-          published.next({
-            matrix: config.generateMatrix(
-              latest.dimensions
-            ) as any,
-            colorstream: config.mapColorScheme(
-              latest.dimensions
-            )
-          })
-        }
-      }),
-    windowResizeEvent$.subscribe((dimensions) => {
-      queued.next({
-        dimensions: [dimensions.width, dimensions.height]
+  return queueInterval$
+    .pipe(mergeWith(windowResizeEvent$))
+    .subscribe((buffer) => {
+      if (typeof buffer === 'number') {
+        return
+      }
+      published.next({
+        matrix: generateMatrix(buffer) as any,
+        colorstream: []
       })
     })
-  ]
 }

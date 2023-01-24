@@ -6,9 +6,9 @@ import { GlobalStyle } from 'styles/global'
 
 const App = () => {
   useEffect(() => {
-    const refs = registerUiDeltaQueue()
+    const subscription = registerUiDeltaQueue()
     return () => {
-      refs.forEach((ref) => ref.unsubscribe())
+      subscription.unsubscribe()
     }
   }, [])
   return (
