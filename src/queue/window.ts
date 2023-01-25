@@ -1,9 +1,8 @@
 import {
-  debounceTime,
+  BehaviorSubject,
   fromEvent,
   map,
-  share,
-  startWith
+  share
 } from 'rxjs'
 
 export interface WindowDimensions {
@@ -17,15 +16,31 @@ export const getWindowDimensions =
     height: window.innerHeight
   })
 
-export const windowResizeEvent$ = fromEvent(
+export const windowResizeSource$ = fromEvent(
   window,
   'resize'
-).pipe(
-  debounceTime(300),
-  startWith(getWindowDimensions),
+)
+
+export const windowDimensions$ = windowResizeSource$.pipe(
   map(getWindowDimensions),
   share({
+    connector: () =>
+      new BehaviorSubject(getWindowDimensions()),
+    resetOnError: false,
     resetOnComplete: false,
     resetOnRefCountZero: false
   })
 )
+
+// export const windowResizeEvent$ = fromEvent(
+//   window,
+//   'resize'
+// ).pipe(
+//   debounceTime(300),
+//   startWith(getWindowDimensions),
+//   map(getWindowDimensions),
+//   share({
+//     resetOnComplete: false,
+//     resetOnRefCountZero: false
+//   })
+// )

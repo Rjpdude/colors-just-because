@@ -1,22 +1,13 @@
 import * as Style from 'fabric/styles'
 import { useEffect, useState } from 'react'
 import { Fabric } from 'fabric/types'
-import { deltaObservable } from 'queue/delta'
-import { createColorStreamIO } from 'io/color'
-import { paletteFrom } from 'styles/palettes'
+import { fabric$ } from 'queue/delta'
 
-export const Playground = () => {
-  const [matrix, setMatrix] = useState<Fabric[]>()
-  const [colors, setColors] = useState<string[][]>([])
+export const FabricComponent = () => {
+  const [matrix, setMatrix] = useState<Fabric[]>([])
 
   useEffect(() => {
-    const sub = deltaObservable.subscribe(({ matrix }) => {
-      const colorMatrix = createColorStreamIO(
-        paletteFrom(4),
-        matrix.length,
-        matrix[0].columns.length
-      )
-      setColors(colorMatrix)
+    const sub = fabric$.subscribe((matrix) => {
       setMatrix(matrix)
     })
     return () => sub.unsubscribe()
@@ -24,20 +15,19 @@ export const Playground = () => {
 
   return (
     <Style.FabricWrapper>
-      {matrix &&
-        matrix.map((row, id) => (
-          <Style.FabricRow key={id}>
-            {row.columns.map((col, colId) => (
-              <Style.FabricCol key={colId}>
-                <Style.FabricBlock
-                  style={{
-                    backgroundColor: colors[id][colId]
-                  }}
-                />
-              </Style.FabricCol>
-            ))}
-          </Style.FabricRow>
-        ))}
+      {matrix.map((row, id) => (
+        <Style.FabricRow key={id}>
+          {row.columns.map((col) => (
+            <Style.FabricCol key={col.id}>
+              <Style.FabricBlock
+                style={{
+                  backgroundColor: col.rgbStr
+                }}
+              />
+            </Style.FabricCol>
+          ))}
+        </Style.FabricRow>
+      ))}
     </Style.FabricWrapper>
   )
 }
