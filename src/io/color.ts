@@ -1,10 +1,10 @@
 import {
   hcl,
   piecewise,
-  interpolateLab,
   quantize,
   RGBColor
 } from 'd3'
+import * as d3 from 'd3'
 
 export interface ColorStream {
   id: string
@@ -43,15 +43,15 @@ export const createColorStreamIO = (
     sortedColorsFromRgbArr(hexOrRgbArr)
 
   const sortedByChroma = piecewise(
-    interpolateLab,
+    d3.interpolateLab,
     chromaSort
   )
-  const sortedByHue = piecewise(interpolateLab, hueSort)
-  const sortedByLight = piecewise(interpolateLab, lightSort)
+  const sortedByHue = piecewise(d3.interpolateLab, hueSort)
+  const sortedByLight = piecewise(d3.interpolateLab, lightSort)
 
   const matrixQuantize = quantize((n) => n, rows + cols)
   const rowInterpolator = (row: number) =>
-    piecewise(interpolateLab, [
+    piecewise(d3.interpolateLab, [
       sortedByChroma(matrixQuantize[row]),
       sortedByHue(matrixQuantize[row]),
       sortedByLight(matrixQuantize[row])
