@@ -3,7 +3,6 @@ import { ColorStream } from 'io/color'
 import { generateMatrix } from 'io/matrix'
 import { Subject, share, mergeWith, interval } from 'rxjs'
 import { Identifiable } from 'types'
-import { keyboardEvent$ } from './keyboard'
 import { windowResizeEvent$ } from './window'
 
 export interface Published {
@@ -27,25 +26,16 @@ export const queueInterval$ = interval(750).pipe(
   })
 )
 
-export enum Delegator {
-  keyboard,
-  window
-}
-
 export const registerUiDeltaQueue = () => {
   return queueInterval$
-    .pipe(mergeWith(windowResizeEvent$, keyboardEvent$))
+    .pipe(mergeWith(windowResizeEvent$))
     .subscribe((buffer) => {
       if (typeof buffer === 'number') {
         return
       }
-      // if (buffer.type === Delegator.keyboard) {
-      // }
-      if (buffer.type === Delegator.window) {
-        published.next({
-          matrix: generateMatrix(buffer) as any,
-          colorstream: []
-        })
-      }
+      published.next({
+        matrix: generateMatrix(buffer) as any,
+        colorstream: []
+      })
     })
 }

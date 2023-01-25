@@ -1,15 +1,12 @@
 import { debounceTime, fromEvent, map, share } from 'rxjs'
-import { Delegator } from './delta'
 
 export interface KeyboardEvent {
-  type: Delegator.keyboard
   keydownValue: string
 }
 
 export const getWindowDimensions = (
   event: KeyboardEventInit
 ): KeyboardEvent => ({
-  type: Delegator.keyboard,
   keydownValue: event.key ?? ''
 })
 
