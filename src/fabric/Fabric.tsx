@@ -1,16 +1,29 @@
 import * as Style from 'fabric/styles'
 import { useEffect, useState } from 'react'
 import { Fabric } from 'fabric/types'
-import { fabric$ } from 'queue/delta'
+import { aspectRatioSource$, fabric$ } from 'queue/delta'
+import { zoomScan } from 'queue/keyboard'
 
-export const FabricComponent = () => {
+export const FabricUi = () => {
   const [matrix, setMatrix] = useState<Fabric[]>([])
 
   useEffect(() => {
     const sub = fabric$.subscribe((matrix) => {
       setMatrix(matrix)
     })
-    return () => sub.unsubscribe()
+
+    const sub2 = zoomScan.subscribe((zoom) => {
+      if (zoom === 0) {
+        aspectRatioSource$.next([Math.PI, Math.PI])
+      } else if (zoom > 0) {
+        aspectRatioSource$.next([1 * (1 + 1 * zoom), Math.PI])
+      }
+    })
+
+    return () => {
+      sub.unsubscribe()
+      sub2.unsubscribe()
+    }
   }, [])
 
   return (
