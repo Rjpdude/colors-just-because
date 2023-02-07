@@ -28,7 +28,7 @@ export type ColorPalette = string[]
 export const colorPaletteSource$ = new Subject<ColorPalette>()
 export const colorPalette$ = colorPaletteSource$.pipe(
   share({
-    connector: () => new BehaviorSubject<ColorPalette>(paletteFrom(2)),
+    connector: () => new BehaviorSubject<ColorPalette>(paletteFrom(1)),
     resetOnError: false,
     resetOnComplete: false,
     resetOnRefCountZero: false
@@ -40,7 +40,7 @@ export const fabric$ = combineLatest([
   aspectRatio$,
   colorPalette$
 ]).pipe(
-  debounceTime(750),
+  debounceTime(100),
   map(([dimensions, aspect, colors]) => {
     const [rows, columns] = fromDimensions(aspect)([
       dimensions.height,
