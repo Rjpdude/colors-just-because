@@ -1,4 +1,4 @@
-import { Fabric } from 'fabric/types'
+import { Fabric } from 'types'
 import { WindowDimensions } from 'queue/window'
 import { v4 as uuid } from 'uuid'
 

@@ -3,3 +3,11 @@ export interface Identified {
 }
 
 export type Identifiable<T> = T & Identified
+
+export interface Fabric extends Identified {
+  columns: FabricColumn[]
+}
+
+export interface FabricColumn extends Identified {
+  rgbStr: string
+}

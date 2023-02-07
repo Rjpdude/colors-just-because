@@ -21,16 +21,3 @@ export const windowDimensions$ = windowResizeSource$.pipe(
     resetOnRefCountZero: false
   })
 )
-
-// export const windowResizeEvent$ = fromEvent(
-//   window,
-//   'resize'
-// ).pipe(
-//   debounceTime(300),
-//   startWith(getWindowDimensions),
-//   map(getWindowDimensions),
-//   share({
-//     resetOnComplete: false,
-//     resetOnRefCountZero: false
-//   })
-// )

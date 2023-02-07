@@ -40,16 +40,16 @@ export const fabric$ = combineLatest([
   aspectRatio$,
   colorPalette$
 ]).pipe(
-  debounceTime(100),
+  debounceTime(750),
   map(([dimensions, aspect, colors]) => {
     const [rows, columns] = fromDimensions(aspect)([
       dimensions.height,
       dimensions.width
     ])
 
-    const colorMatrix = createColorStreamIO(colors, rows, columns)
     const xAxis = range(0, rows)
     const yAxis = range(0, columns)
+    const colorMatrix = createColorStreamIO(colors, rows, columns)
 
     return xAxis.map((_, rIndx) => ({
       id: uuid(),

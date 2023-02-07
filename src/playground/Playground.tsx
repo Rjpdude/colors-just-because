@@ -1,6 +1,6 @@
-import * as Style from 'fabric/styles'
+import { Wrapper, Row, Col, Block } from 'playground/styles'
 import { useEffect, useState } from 'react'
-import { Fabric } from 'fabric/types'
+import { Fabric } from 'types'
 import { fabric$ } from 'queue/delta'
 import { useZoomScan } from './useZoomScan'
 
@@ -8,9 +8,7 @@ export const Playground = () => {
   const [matrix, setMatrix] = useState<Fabric[]>([])
 
   useEffect(() => {
-    const sub = fabric$.subscribe((matrix) => {
-      setMatrix(matrix)
-    })
+    const sub = fabric$.subscribe(setMatrix)
     return () => {
       sub.unsubscribe()
     }
@@ -19,20 +17,16 @@ export const Playground = () => {
   useZoomScan()
 
   return (
-    <Style.FabricWrapper>
+    <Wrapper>
       {matrix.map(({ id, columns }) => (
-        <Style.FabricRow key={id}>
-          {columns.map(({ id: colId, rgbStr }) => (
-            <Style.FabricCol key={colId}>
-              <Style.FabricBlock
-                style={{
-                  backgroundColor: rgbStr
-                }}
-              />
-            </Style.FabricCol>
+        <Row key={id}>
+          {columns.map((col) => (
+            <Col key={col.id}>
+              <Block bg={col.rgbStr} />
+            </Col>
           ))}
-        </Style.FabricRow>
+        </Row>
       ))}
-    </Style.FabricWrapper>
+    </Wrapper>
   )
 }
