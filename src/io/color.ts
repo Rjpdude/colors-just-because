@@ -1,9 +1,4 @@
-import {
-  hcl,
-  piecewise,
-  quantize,
-  RGBColor
-} from 'd3'
+import { hcl, piecewise, quantize, RGBColor } from 'd3'
 import * as d3 from 'd3'
 
 export interface ColorStream {
@@ -17,9 +12,7 @@ export interface UIColor {
   rgb: RGBColor
 }
 
-export const sortedColorsFromRgbArr = (
-  rgbArr: string[]
-) => {
+export const sortedColorsFromRgbArr = (rgbArr: string[]) => {
   const hclArr = () => rgbArr.map((color) => hcl(color))
   return {
     hueSort: hclArr()
@@ -39,13 +32,9 @@ export const createColorStreamIO = (
   rows: number,
   cols: number
 ): string[][] => {
-  const { hueSort, chromaSort, lightSort } =
-    sortedColorsFromRgbArr(hexOrRgbArr)
+  const { hueSort, chromaSort, lightSort } = sortedColorsFromRgbArr(hexOrRgbArr)
 
-  const sortedByChroma = piecewise(
-    d3.interpolateLab,
-    chromaSort
-  )
+  const sortedByChroma = piecewise(d3.interpolateLab, chromaSort)
   const sortedByHue = piecewise(d3.interpolateLab, hueSort)
   const sortedByLight = piecewise(d3.interpolateLab, lightSort)
 
