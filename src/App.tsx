@@ -1,4 +1,3 @@
-// import { FabricComponent } from 'fabric/Fabric'
 import { Playground } from 'playground/Playground'
 import { GlobalStyle } from 'styles/global'
 
@@ -7,7 +6,6 @@ const App = () => {
     <div className="App">
       <GlobalStyle background="" />
       <Playground />
-      {/* <FabricComponent /> */}
     </div>
   )
 }
