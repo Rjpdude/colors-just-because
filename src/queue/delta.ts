@@ -28,7 +28,7 @@ export type ColorPalette = string[]
 export const colorPaletteSource$ = new Subject<ColorPalette>()
 export const colorPalette$ = colorPaletteSource$.pipe(
   share({
-    connector: () => new BehaviorSubject<ColorPalette>(paletteFrom(1)),
+    connector: () => new BehaviorSubject<ColorPalette>(paletteFrom(4)),
     resetOnError: false,
     resetOnComplete: false,
     resetOnRefCountZero: false

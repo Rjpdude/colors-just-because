@@ -2,7 +2,7 @@ import { AspectRatio, aspectRatioSource$ } from 'queue/delta'
 import { zoomScan } from 'queue/keyboard'
 import { useEffect } from 'react'
 
-const defaultAR: AspectRatio = [Math.PI, 2]
+const defaultAR: AspectRatio = [1, Math.PI]
 
 export const useZoomScan = () => {
   useEffect(() => {
