@@ -1,4 +1,3 @@
-import { Fabric } from 'fabric/types'
 import { createColorStreamIO } from 'io/color'
 import { v4 as uuid } from 'uuid'
 import {
@@ -11,6 +10,8 @@ import {
 } from 'rxjs'
 import { paletteFrom } from 'styles/palettes'
 import { windowDimensions$ } from './window'
+import { fromDimensions } from 'io/declarations'
+import { range } from 'ramda'
 
 export type AspectRatio = [number, number]
 export const aspectRatioSource$ = new Subject<AspectRatio>()
@@ -27,7 +28,7 @@ export type ColorPalette = string[]
 export const colorPaletteSource$ = new Subject<ColorPalette>()
 export const colorPalette$ = colorPaletteSource$.pipe(
   share({
-    connector: () => new BehaviorSubject<ColorPalette>(paletteFrom(4)),
+    connector: () => new BehaviorSubject<ColorPalette>(paletteFrom(2)),
     resetOnError: false,
     resetOnComplete: false,
     resetOnRefCountZero: false
@@ -41,18 +42,20 @@ export const fabric$ = combineLatest([
 ]).pipe(
   debounceTime(100),
   map(([dimensions, aspect, colors]) => {
-    const div = aspect[0]
-    const mult = aspect[1]
+    const [rows, columns] = fromDimensions(aspect)([
+      dimensions.height,
+      dimensions.width
+    ])
 
-    const rows = Math.floor((Math.sqrt(dimensions.height) / div) * mult)
-    const columns = Math.floor((Math.sqrt(dimensions.width) / div) * mult)
     const colorMatrix = createColorStreamIO(colors, rows, columns)
+    const xAxis = range(0, rows)
+    const yAxis = range(0, columns)
 
-    return Array.from<unknown, Fabric>({ length: rows }, (_, rowKey) => ({
+    return xAxis.map((_, rIndx) => ({
       id: uuid(),
-      columns: Array.from({ length: columns }, (_, columnKey) => ({
+      columns: yAxis.map((_, cIndx) => ({
         id: uuid(),
-        rgbStr: colorMatrix[rowKey][columnKey]
+        rgbStr: colorMatrix[rIndx][cIndx]
       }))
     }))
   })

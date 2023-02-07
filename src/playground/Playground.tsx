@@ -1,8 +1,8 @@
 import * as Style from 'fabric/styles'
 import { useEffect, useState } from 'react'
 import { Fabric } from 'fabric/types'
-import { aspectRatioSource$, fabric$ } from 'queue/delta'
-import { zoomScan } from 'queue/keyboard'
+import { fabric$ } from 'queue/delta'
+import { useZoomScan } from './useZoomScan'
 
 export const Playground = () => {
   const [matrix, setMatrix] = useState<Fabric[]>([])
@@ -11,30 +11,22 @@ export const Playground = () => {
     const sub = fabric$.subscribe((matrix) => {
       setMatrix(matrix)
     })
-
-    const sub2 = zoomScan.subscribe((zoom) => {
-      if (zoom === 0) {
-        aspectRatioSource$.next([Math.PI, Math.PI])
-      } else if (zoom > 0) {
-        aspectRatioSource$.next([1 * (1 + 1 * zoom), Math.PI])
-      }
-    })
-
     return () => {
       sub.unsubscribe()
-      sub2.unsubscribe()
     }
   }, [])
 
+  useZoomScan()
+
   return (
     <Style.FabricWrapper>
-      {matrix.map((row, id) => (
+      {matrix.map(({ id, columns }) => (
         <Style.FabricRow key={id}>
-          {row.columns.map((col) => (
-            <Style.FabricCol key={col.id}>
+          {columns.map(({ id: colId, rgbStr }) => (
+            <Style.FabricCol key={colId}>
               <Style.FabricBlock
                 style={{
-                  backgroundColor: col.rgbStr
+                  backgroundColor: rgbStr
                 }}
               />
             </Style.FabricCol>

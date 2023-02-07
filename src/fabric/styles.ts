@@ -21,12 +21,9 @@ export const FabricCol = styled.div`
   width: 100%;
 `
 
-export const FabricBlock = styled.div`
+export const FabricBlock = styled.div.attrs<{ bg: string }>((props) => ({
+  style: { backgroundColor: props.bg }
+}))`
   display: flex;
   flex: 1 0 0;
-
-  /* &:hover {
-    cursor: pointer;
-    border: 2px solid rgba(10, 10, 10, 0.2);
-  } */
 `
